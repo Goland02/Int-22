@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  vikunja:
+    image: vikunja/vikunja:latest
+    container_name: vikunja
+    environment:
+      - VIKUNJA_DB_PATH=/db/vikunja.db
+    volumes:
+      - ./files:/app/vikunja/files
+      - ./db:/db
+    ports:
+      - "3456:3456"
+    networks:
+      - vikunja_network
+  test:
+    build: .
+    container_name: test_runner
+    depends_on:
+      - vikunja
+    volumes:
+      - ./tests:/tests
+    working_dir: /tests
+    networks:
+      - vikunja_network
+
+networks:
+  vikunja_network:
+    driver: bridge
